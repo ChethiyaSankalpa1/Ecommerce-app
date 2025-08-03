@@ -127,10 +127,10 @@ const Collection = () => {
       {/* Product Display Section */}
       <div className="flex-1">
         {/* Title & Sort Dropdown */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          <h2 className="text-4xl font-bold tracking-wide">
-            All Collection <span className="ml-2">—</span>
-          </h2>
+        <div className="mb-6">
+          <div className="text-4xl font-bold uppercase mb-8">
+            All Collection
+          </div>
 
           <select
             className="border border-gray-300 rounded-lg px-3 py-2 text-gray-600"
@@ -148,7 +148,7 @@ const Collection = () => {
             filterProducts.map((item) => (
               <div key={item._id} className="p-4 border rounded-xl hover:shadow-md transition-all duration-300">
                 <ProductItem
-                  id={item._id} // ✅ Correct ID
+                  id={item._id}
                   name={item.name}
                   price={item.price}
                   image={item.image}

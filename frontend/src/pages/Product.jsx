@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
-import { assets } from '../assets/assets' // Ensure star_icon and star_dull_icon exist here
+import { assets } from '../assets/assets' // Make sure star_icon and star_dull_icon exist here
+import RelatedProducts from '../components/RelatedProducts'
 
 const Product = () => {
   const { productId } = useParams()
-  const { products, currency } = useContext(ShopContext)
+  const { products, currency, addToCart } = useContext(ShopContext)
 
   const [productData, setProductData] = useState(null)
   const [image, setImage] = useState('')
-  const [size, setSize] = useState('')
+  const [size, setSize] = useState('') // User must select size manually
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('description') // Tabs: 'description' or 'reviews'
 
@@ -25,7 +26,7 @@ const Product = () => {
     if (found) {
       setProductData(found)
       setImage(found.image?.[0] || '')
-      if (found.sizes && found.sizes.length > 0) setSize(found.sizes[0])
+      setSize('') // reset size selection on product change
     } else {
       setProductData(null)
     }
@@ -49,10 +50,10 @@ const Product = () => {
 
   return (
     <div className="border-t pt-10 px-4 sm:px-10 max-w-screen-xl mx-auto">
+      {/* Top section with images and product info side by side */}
       <div className="flex flex-col sm:flex-row gap-10">
-        {/* Left column: Images + tabs */}
+        {/* Left column: Images */}
         <div className="flex-1 flex flex-col gap-6">
-          {/* Images */}
           <div className="flex flex-col-reverse sm:flex-row gap-4">
             <div className="flex sm:flex-col gap-2">
               {productData.image.map((img, index) => (
@@ -67,49 +68,6 @@ const Product = () => {
             </div>
             <div className="w-full sm:w-[80%]">
               <img src={image} alt={productData.name} className="w-full h-auto rounded" />
-            </div>
-          </div>
-
-          {/* Tabs for Description & Reviews */}
-          <div className="mt-8 border-t pt-6">
-            <div className="flex border-b">
-              <button
-                type="button"
-                className={`px-4 py-2 font-medium focus:outline-none ${
-                  activeTab === 'description'
-                    ? 'text-orange-500 border-b-2 border-orange-500'
-                    : 'text-gray-600 hover:text-orange-500'
-                }`}
-                onClick={() => setActiveTab('description')}
-              >
-                Description
-              </button>
-              <button
-                type="button"
-                className={`px-4 py-2 font-medium focus:outline-none ${
-                  activeTab === 'reviews'
-                    ? 'text-orange-500 border-b-2 border-orange-500'
-                    : 'text-gray-600 hover:text-orange-500'
-                }`}
-                onClick={() => setActiveTab('reviews')}
-              >
-                Reviews (122)
-              </button>
-            </div>
-
-            <div className="py-4 text-gray-700">
-              {activeTab === 'description' ? (
-                <>
-                  <p className="mb-4">
-                    An e-commerce website is an online platform that facilitates the buying and selling of products or services over the internet. It serves as a virtual marketplace where businesses and individuals can showcase their products, interact with customers, and complete transactions without the need for a physical presence. E-commerce websites have gained immense popularity due to their convenience, accessibility, and the global reach they offer.
-                  </p>
-                  <p>
-                    E-commerce websites typically display products or services along with detailed descriptions, images, prices, and any available variations (e.g., sizes, colors). Each product usually has its own dedicated page with relevant information.
-                  </p>
-                </>
-              ) : (
-                <p>Reviews section will be displayed here.</p>
-              )}
             </div>
           </div>
         </div>
@@ -130,6 +88,7 @@ const Product = () => {
           <p className="text-2xl font-bold">
             {currency} {productData.price}
           </p>
+
           <p className="text-gray-600">{productData.description}</p>
 
           {/* Size selection */}
@@ -151,7 +110,10 @@ const Product = () => {
           </div>
 
           {/* Add to Cart */}
-          <button className="mt-6 bg-orange-500 text-white px-6 py-3 rounded hover:bg-orange-600 transition">
+          <button
+            onClick={() => addToCart(productData._id, size)}
+            className="mt-6 bg-orange-500 text-white px-6 py-3 rounded hover:bg-orange-600 transition"
+          >
             ADD TO CART
           </button>
 
@@ -162,6 +124,54 @@ const Product = () => {
             <p className="text-sm font-medium">✔️ Easy return and exchange policy within 7 days.</p>
           </div>
         </div>
+      </div>
+
+      {/* Tabs for Description & Reviews - full width below */}
+      <div className="mt-10 border-t pt-6 max-w-screen-xl mx-auto">
+        <div className="flex border-b max-w-screen-xl mx-auto">
+          <button
+            type="button"
+            className={`px-4 py-2 font-medium focus:outline-none ${
+              activeTab === 'description'
+                ? 'text-orange-500 border-b-2 border-orange-500'
+                : 'text-gray-600 hover:text-orange-500'
+            }`}
+            onClick={() => setActiveTab('description')}
+          >
+            Description
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 font-medium focus:outline-none ${
+              activeTab === 'reviews'
+                ? 'text-orange-500 border-b-2 border-orange-500'
+                : 'text-gray-600 hover:text-orange-500'
+            }`}
+            onClick={() => setActiveTab('reviews')}
+          >
+            Reviews (122)
+          </button>
+        </div>
+
+        <div className="py-4 text-gray-700 max-w-screen-xl mx-auto">
+          {activeTab === 'description' ? (
+            <>
+              <p className="mb-4">
+                An e-commerce website is an online platform that facilitates the buying and selling of products or services over the internet. It serves as a virtual marketplace where businesses and individuals can showcase their products, interact with customers, and complete transactions without the need for a physical presence. E-commerce websites have gained immense popularity due to their convenience, accessibility, and the global reach they offer.
+              </p>
+              <p>
+                E-commerce websites typically display products or services along with detailed descriptions, images, prices, and any available variations (e.g., sizes, colors). Each product usually has its own dedicated page with relevant information.
+              </p>
+            </>
+          ) : (
+            <p>Reviews section will be displayed here.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Related Products below tabs */}
+      <div className="mt-16 max-w-screen-xl mx-auto">
+        <RelatedProducts category={productData.category} subCategory={productData.subCategory} />
       </div>
     </div>
   )
