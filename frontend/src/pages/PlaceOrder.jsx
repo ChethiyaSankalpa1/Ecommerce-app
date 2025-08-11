@@ -13,11 +13,14 @@ const PlaceOrder = () => {
 
   return (
     <div className="bg-gray-100 py-6 px-4 sm:px-6 lg:px-16 min-h-screen text-sm">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
+      {/* FIXED: Changed from grid to flex for better horizontal alignment */}
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 items-start">
         {/* 📦 Delivery Info */}
-        <div className="text-4xl font-bold uppercase mb-8">
-        <Title text1="DELIVERY" text2=" INFORMATION" />
-          <form className="space-y-3 mt-4 bg-white p-5 rounded-lg shadow-sm">
+        <div className="w-full md:w-1/2">
+          <div className="text-4xl font-bold uppercase mb-4">
+            <Title text1="DELIVERY" text2=" INFORMATION" />
+          </div>
+          <form className="space-y-3 bg-white p-5 rounded-lg shadow-sm">
             {/* First + Last Name */}
             <div className="grid grid-cols-2 gap-3">
               <input className={inputStyle} type="text" placeholder="First Name" required />
@@ -47,9 +50,8 @@ const PlaceOrder = () => {
           </form>
         </div>
 
-        {/* 💳 Payment & Cart */}
-        <div className="space-y-6">
-          {/* 🛒 Cart Total */}
+        {/* 💳 Cart + Payment */}
+        <div className="w-full md:w-1/2 space-y-6">
           <CartTotal />
 
           {/* 💳 Payment Options */}
