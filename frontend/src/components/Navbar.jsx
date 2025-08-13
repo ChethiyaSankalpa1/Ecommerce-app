@@ -1,16 +1,36 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { assets } from "../assets/assets";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
 
-  const { setShowSearch, getCartCount } = useContext(ShopContext);
+  const {
+    setShowSearch,
+    getCartCount,
+    setToken,
+    setCartItems,
+    token,
+  } = useContext(ShopContext);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setShowProfileDropdown(false);
+  }, [location.pathname]);
 
   const toggleDropdown = () => {
     setShowProfileDropdown(!showProfileDropdown);
+  };
+
+  const handleLogout = () => {
+    navigate("/login");
+    localStorage.removeItem("token");
+    setToken("");
+    setCartItems({});
   };
 
   return (
@@ -49,24 +69,40 @@ const Navbar = () => {
 
         {/* Profile Dropdown */}
         <div className="relative">
-          <NavLink to="/login">
-            <img
-              src={assets.profile_icon}
-              className="w-6 h-6 cursor-pointer"
-              alt="profile"
-              onClick={toggleDropdown}
-            />
-          </NavLink>
+          <img
+            src={assets.profile_icon}
+            className="w-6 h-6 cursor-pointer"
+            alt="profile"
+            onClick={() => {
+              if (token) toggleDropdown();
+              else navigate("/login");
+            }}
+          />
           {showProfileDropdown && (
             <div className="absolute top-10 right-0 bg-white shadow-xl rounded-xl p-2 w-48 z-50">
               <div className="flex flex-col gap-2 text-gray-700">
-                <p className="px-4 py-2 text-sm rounded-md hover:bg-gray-100 hover:text-black cursor-pointer">
+                <p
+                  onClick={() => {
+                    navigate("/profile");
+                    setShowProfileDropdown(false);
+                  }}
+                  className="px-4 py-2 text-sm rounded-md hover:bg-gray-100 hover:text-black cursor-pointer"
+                >
                   My Profile
                 </p>
-                <p className="px-4 py-2 text-sm rounded-md hover:bg-gray-100 hover:text-black cursor-pointer">
-                  Settings
+                <p
+                  onClick={() => {
+                    navigate("/orders");
+                    setShowProfileDropdown(false);
+                  }}
+                  className="px-4 py-2 text-sm rounded-md hover:bg-gray-100 hover:text-black cursor-pointer"
+                >
+                  Orders
                 </p>
-                <p className="px-4 py-2 text-sm text-red-500 rounded-md hover:bg-red-100 hover:text-red-600 cursor-pointer">
+                <p
+                  onClick={handleLogout}
+                  className="px-4 py-2 text-sm text-red-500 rounded-md hover:bg-red-100 hover:text-red-600 cursor-pointer"
+                >
                   Logout
                 </p>
               </div>

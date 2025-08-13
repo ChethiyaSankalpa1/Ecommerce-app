@@ -14,6 +14,10 @@ import Footer from './components/Footer';
 import SearchBar from './components/SearchBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Profile from './pages/Profile';
+
+// ✅ Export the backend URL
+export const backendUrl = "http://localhost:4000";
 
 const App = () => {
   return (
@@ -29,8 +33,9 @@ const App = () => {
         <Route path='/product/:productId' element={<Product />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/PlaceOrder' element={<PlaceOrder />} /> {/* ✅ FIXED: Match casing with navigate */}
+        <Route path='/PlaceOrder' element={<PlaceOrder />} />
         <Route path='/orders' element={<Orders />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       <Footer />
     </div>

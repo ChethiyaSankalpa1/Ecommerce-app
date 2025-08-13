@@ -1,43 +1,43 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { useParams } from 'react-router-dom'
-import { ShopContext } from '../context/ShopContext'
-import { assets } from '../assets/assets' // Make sure star_icon and star_dull_icon exist here
-import RelatedProducts from '../components/RelatedProducts'
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams } from 'react-router-dom';
+import { ShopContext } from '../context/ShopContext';
+import { assets } from '../assets/assets'; // star_icon and star_dull_icon
+import RelatedProducts from '../components/RelatedProducts';
 
 const Product = () => {
-  const { productId } = useParams()
-  const { products, currency, addToCart } = useContext(ShopContext)
+  const { productId } = useParams();
+  const { products, currency, addToCart } = useContext(ShopContext);
 
-  const [productData, setProductData] = useState(null)
-  const [image, setImage] = useState('')
-  const [size, setSize] = useState('') // User must select size manually
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('description') // Tabs: 'description' or 'reviews'
+  const [productData, setProductData] = useState(null);
+  const [image, setImage] = useState('');
+  const [size, setSize] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('description');
 
   useEffect(() => {
     if (!products || products.length === 0) {
-      setLoading(true)
-      return
+      setLoading(true);
+      return;
     }
 
-    setLoading(false)
+    setLoading(false);
 
-    const found = products.find(item => String(item._id) === String(productId))
+    const found = products.find(item => String(item._id) === String(productId));
     if (found) {
-      setProductData(found)
-      setImage(found.image?.[0] || '')
-      setSize('') // reset size selection on product change
+      setProductData(found);
+      setImage(found.image?.[0] || '');
+      setSize('');
     } else {
-      setProductData(null)
+      setProductData(null);
     }
-  }, [productId, products])
+  }, [productId, products]);
 
   if (loading) {
     return (
       <div className="text-center py-20 text-gray-600 text-xl">
         Loading product...
       </div>
-    )
+    );
   }
 
   if (!productData) {
@@ -45,18 +45,23 @@ const Product = () => {
       <div className="text-center py-20 text-gray-600 text-xl">
         Product not found.
       </div>
-    )
+    );
   }
+
+  // FIX: Use fallback sizes if productData.sizes is missing or empty
+  const sizesToShow = productData.sizes && productData.sizes.length > 0
+    ? productData.sizes
+    : ['S', 'M', 'L', 'XL'];
 
   return (
     <div className="border-t pt-10 px-4 sm:px-10 max-w-screen-xl mx-auto">
-      {/* Top section with images and product info side by side */}
+      {/* Top Section */}
       <div className="flex flex-col sm:flex-row gap-10">
-        {/* Left column: Images */}
+        {/* Images */}
         <div className="flex-1 flex flex-col gap-6">
           <div className="flex flex-col-reverse sm:flex-row gap-4">
             <div className="flex sm:flex-col gap-2">
-              {productData.image.map((img, index) => (
+              {productData.image?.map((img, index) => (
                 <img
                   key={index}
                   src={img}
@@ -72,11 +77,11 @@ const Product = () => {
           </div>
         </div>
 
-        {/* Right column: Product info */}
+        {/* Info */}
         <div className="flex-1 space-y-4">
           <h1 className="text-3xl font-semibold">{productData.name}</h1>
 
-          {/* Star Ratings */}
+          {/* Rating */}
           <div className="flex items-center gap-1">
             {[...Array(4)].map((_, i) => (
               <img key={i} src={assets.star_icon} alt="Star" className="w-4 h-4" />
@@ -91,11 +96,11 @@ const Product = () => {
 
           <p className="text-gray-600">{productData.description}</p>
 
-          {/* Size selection */}
+          {/* Sizes */}
           <div className="mt-4">
             <p className="font-medium mb-2">Select Size:</p>
             <div className="flex gap-2">
-              {productData.sizes.map((item, index) => (
+              {sizesToShow.map((item, index) => (
                 <button
                   key={index}
                   onClick={() => setSize(item)}
@@ -117,7 +122,7 @@ const Product = () => {
             ADD TO CART
           </button>
 
-          {/* Additional Info */}
+          {/* Guarantee Info */}
           <div className="mt-6 p-4 bg-gray-50 rounded space-y-2">
             <p className="text-sm font-medium">✔️ 100% Original product.</p>
             <p className="text-sm font-medium">✔️ Cash on delivery is available on this product.</p>
@@ -126,12 +131,11 @@ const Product = () => {
         </div>
       </div>
 
-      {/* Tabs for Description & Reviews - full width below */}
+      {/* Description/Reviews Tab */}
       <div className="mt-10 border-t pt-6 max-w-screen-xl mx-auto">
-        <div className="flex border-b max-w-screen-xl mx-auto">
+        <div className="flex border-b">
           <button
-            type="button"
-            className={`px-4 py-2 font-medium focus:outline-none ${
+            className={`px-4 py-2 font-medium ${
               activeTab === 'description'
                 ? 'text-orange-500 border-b-2 border-orange-500'
                 : 'text-gray-600 hover:text-orange-500'
@@ -141,8 +145,7 @@ const Product = () => {
             Description
           </button>
           <button
-            type="button"
-            className={`px-4 py-2 font-medium focus:outline-none ${
+            className={`px-4 py-2 font-medium ${
               activeTab === 'reviews'
                 ? 'text-orange-500 border-b-2 border-orange-500'
                 : 'text-gray-600 hover:text-orange-500'
@@ -153,7 +156,7 @@ const Product = () => {
           </button>
         </div>
 
-        <div className="py-4 text-gray-700 max-w-screen-xl mx-auto">
+        <div className="py-4 text-gray-700">
           {activeTab === 'description' ? (
             <>
               <p className="mb-4">
@@ -169,12 +172,15 @@ const Product = () => {
         </div>
       </div>
 
-      {/* Related Products below tabs */}
+      {/* Related Products */}
       <div className="mt-16 max-w-screen-xl mx-auto">
-        <RelatedProducts category={productData.category} subCategory={productData.subCategory} />
+        <RelatedProducts
+          category={productData.category}
+          subCategory={productData.subCategory}
+        />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Product
+export default Product;
